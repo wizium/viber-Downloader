@@ -103,7 +103,7 @@ class _HomeBodyState extends State<HomeBody> {
                       ElevatedButton.icon(
                         onPressed: downloadLink.text.isNotEmpty
                             ? () async {
-                                await getVideoDetails(downloadLink.text);
+                                await getData(downloadLink.text);
                               }
                             : null,
                         icon: const Icon(
