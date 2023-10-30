@@ -1,7 +1,10 @@
 import "package:flutter/material.dart";
 import "package:flutter_inappwebview/flutter_inappwebview.dart";
+import 'package:get/get.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import '/functions/videoModel_parsing.dart';
+import 'package:viberloader/screens/download.dart';
 
 InAppWebViewController controller = InAppWebViewController("", webView);
 late HeadlessInAppWebView webView;
@@ -10,7 +13,7 @@ late bool checkAlgoValue;
 getData(String userUrl) async {
   final uriHost = Uri.parse(userUrl).host;
   debugPrint(uriHost);
-  if (uriHost == "fb.watch") {
+  if (uriHost == "fb.watch" || uriHost == "www.facebook.com") {
     String? extractedUrl;
     checkAlgoValue = false;
     webView = HeadlessInAppWebView(
@@ -26,6 +29,13 @@ getData(String userUrl) async {
       },
     );
     await webView.run();
+  } else if (uriHost == "m.youtube.com" ||
+      uriHost == "youtu.be" ||
+      uriHost == "youtube.com") {
+    Get.snackbar(
+      "Sorry",
+      "Youtube video cant be downloaded Because of legal restrictions 😞",
+    );
   } else {
     getVideoData(extractedUrl: userUrl);
   }
@@ -66,12 +76,19 @@ void getVideoData(
   final status = res.statusCode;
   if (status != 200) throw Exception('http.post error: statusCode= $status');
   if (jsonDecode(res.body)["mess"] == "") {
-    debugPrint(res.body);
+    final responseData = await parseVideoData(res.body);
+    Get.to(DownloadScreen(
+      videoModel: responseData,
+    ));
   } else {
-    final linkLength =
-        jsonDecode(res.body)["mess"].toString().split("\"")[1].split("/");
-    final newPage = linkLength[linkLength.length - 2].split("-")[0];
-    debugPrint(newPage);
-    getVideoData(extractedUrl: extractedUrl, k_page: newPage);
+    try {
+      final linkLength =
+          jsonDecode(res.body)["mess"].toString().split("\"")[1].split("/");
+      final newPage = linkLength[linkLength.length - 2].split("-")[0];
+      debugPrint(newPage);
+      getVideoData(extractedUrl: extractedUrl, k_page: newPage);
+    } catch (e) {
+      Get.snackbar("Error", "Link is invalid");
+    }
   }
 }

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import '../functions/get_video_data.dart';
+import 'package:viberloader/functions/get_video_data.dart';
 import '/screens/home.dart';
 import '/data/download_guide_steps.dart';
 
@@ -103,7 +103,7 @@ class _HomeBodyState extends State<HomeBody> {
                       ElevatedButton.icon(
                         onPressed: downloadLink.text.isNotEmpty
                             ? () async {
-                                await getData(downloadLink.text);
+                                getData(downloadLink.text);
                               }
                             : null,
                         icon: const Icon(
