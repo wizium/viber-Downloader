@@ -8,8 +8,7 @@ import 'screens/home.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-
-  FlutterDownloader.initialize(debug: true, ignoreSsl: true);
+  await FlutterDownloader.initialize(debug: true, ignoreSsl: true);
   runApp(const App());
 }
 
@@ -50,8 +49,9 @@ class _AppState extends State<App> {
     return GetMaterialApp(
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(
-          seedColor: Colors.lime,
-          brightness: Brightness.dark,
+          seedColor: Colors.red,
+          // seedColor: Colors.lime,
+          brightness: Brightness.light,
         ),
         useMaterial3: true,
       ),

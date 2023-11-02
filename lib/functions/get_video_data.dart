@@ -1,8 +1,11 @@
+// ignore_for_file: use_build_context_synchronously
+
 import "package:flutter/material.dart";
 import "package:flutter_inappwebview/flutter_inappwebview.dart";
 import 'package:get/get.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import 'package:viberloader/widget/error_bottom_sheet.dart';
 import '/functions/videoModel_parsing.dart';
 import 'package:viberloader/screens/download.dart';
 
@@ -10,7 +13,7 @@ InAppWebViewController controller = InAppWebViewController("", webView);
 late HeadlessInAppWebView webView;
 late bool checkAlgoValue;
 
-getData(String userUrl) async {
+getData(String userUrl, BuildContext context) async {
   final uriHost = Uri.parse(userUrl).host;
   debugPrint(uriHost);
   if (uriHost == "fb.watch" || uriHost == "www.facebook.com") {
@@ -23,7 +26,7 @@ getData(String userUrl) async {
         if (checkAlgoValue == false) {
           extractedUrl = url.toString();
           debugPrint(extractedUrl);
-          getVideoData(extractedUrl: extractedUrl!);
+          getVideoData(extractedUrl: extractedUrl!, context: context);
           webView.dispose();
         }
       },
@@ -32,17 +35,20 @@ getData(String userUrl) async {
   } else if (uriHost == "m.youtube.com" ||
       uriHost == "youtu.be" ||
       uriHost == "youtube.com") {
-    Get.snackbar(
-      "Sorry",
-      "Youtube video cant be downloaded Because of legal restrictions 😞",
+    errorSheet(
+      context,
+      errorMessage:
+          "Due to legal restrictions, we can't download videos from YouTube. Please use a different link.",
     );
   } else {
-    getVideoData(extractedUrl: userUrl);
+    getVideoData(extractedUrl: userUrl, context: context);
   }
 }
 
 void getVideoData(
-    {required String extractedUrl, String k_page = "Home"}) async {
+    {required String extractedUrl,
+    String k_page = "Home",
+    required BuildContext context}) async {
   final headers = {
     'Accept': '*/*',
     'Accept-Language': 'en-GB,en-US;q=0.9,en;q=0.8',
@@ -86,9 +92,12 @@ void getVideoData(
           jsonDecode(res.body)["mess"].toString().split("\"")[1].split("/");
       final newPage = linkLength[linkLength.length - 2].split("-")[0];
       debugPrint(newPage);
-      getVideoData(extractedUrl: extractedUrl, k_page: newPage);
+      getVideoData(
+          extractedUrl: extractedUrl, k_page: newPage, context: context);
     } catch (e) {
-      Get.snackbar("Error", "Link is invalid");
+      errorSheet(context,
+          errorMessage:
+              "The Link may not be valid or Check your internet connection");
     }
   }
 }

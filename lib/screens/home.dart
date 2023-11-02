@@ -43,6 +43,8 @@ class _HomePageState extends State<HomePage> {
       ),
       body: screenBodies[navBarIndex],
       bottomNavigationBar: SalomonBottomBar(
+        selectedItemColor: Theme.of(context).colorScheme.background,
+        unselectedItemColor: Theme.of(context).colorScheme.inversePrimary,
         curve: Curves.fastLinearToSlowEaseIn,
         backgroundColor: Theme.of(context).colorScheme.primary,
         currentIndex: navBarIndex,

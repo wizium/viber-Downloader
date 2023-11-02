@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:viberloader/widget/custom_buttons.dart';
+import 'package:viberloader/widget/video_listing.dart';
 import '../model/video_screen.dart';
 
 class DownloadScreen extends StatefulWidget {
@@ -43,6 +44,7 @@ class _DownloadScreenState extends State<DownloadScreen> {
               borderRadius: BorderRadius.circular(10),
               child: Image.network(
                 widget.videoModel.thumbnailLink,
+                fit: BoxFit.fill,
                 errorBuilder: (context, error, stackTrace) {
                   return Expanded(
                     child: Container(
@@ -61,7 +63,7 @@ class _DownloadScreenState extends State<DownloadScreen> {
               child: Align(
                 alignment: Alignment.centerLeft,
                 child: Text(
-                  widget.videoModel.platform,
+                  widget.videoModel.platform.split("-")[0],
                   style: Theme.of(context).textTheme.headlineSmall,
                 ),
               ),
@@ -75,54 +77,19 @@ class _DownloadScreenState extends State<DownloadScreen> {
             ),
             CustomButton(
               icon: Icons.file_download_rounded,
-              childText: "Download Video",
-              // color: Theme.of(context).colorScheme.inversePrimary,
+              childText: "Video Download",
               color: Colors.pink,
               onPressed: () {
-                Get.bottomSheet(
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 15),
-                    child: Container(
-                      height: Get.height * 0.4,
-                      width: Get.width,
-                      decoration: BoxDecoration(
-                        color: Theme.of(context).colorScheme.onInverseSurface,
-                        borderRadius: const BorderRadius.only(
-                          topLeft: Radius.circular(15),
-                          topRight: Radius.circular(15),
-                        ),
-                      ),
-                      child: Center(
-                        child: ListView.builder(
-                          itemCount: widget.videoModel.downloadLink.length,
-                          shrinkWrap: true,
-                          itemBuilder: (context, index) {
-                            return Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Checkbox(value: false, onChanged: (value) {}),
-                                Text(
-                                  widget.videoModel.downloadLink[index].quality,
-                                ),
-                                Text(
-                                  widget.videoModel.downloadLink[index].size,
-                                ),
-                              ],
-                            );
-                          },
-                        ),
-                      ),
-                    ),
-                  ),
-                  backgroundColor: Colors.transparent,
-                );
+                videoListing(context, widget.videoModel, 0);
               },
             ),
             CustomButton(
               icon: Icons.music_note_rounded,
-              childText: "Download Mp3",
+              childText: "Audio Download",
               color: Colors.indigo,
-              onPressed: () {},
+              onPressed: () {
+                videoListing(context, widget.videoModel, 1);
+              },
             ),
             CustomButton(
               icon: Icons.stream,

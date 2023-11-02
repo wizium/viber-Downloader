@@ -103,7 +103,7 @@ class _HomeBodyState extends State<HomeBody> {
                       ElevatedButton.icon(
                         onPressed: downloadLink.text.isNotEmpty
                             ? () async {
-                                getData(downloadLink.text);
+                                getData(downloadLink.text, context);
                               }
                             : null,
                         icon: const Icon(
@@ -117,15 +117,8 @@ class _HomeBodyState extends State<HomeBody> {
                   ),
                 ),
                 orientation == Orientation.portrait
-                    ? Image.network(
-                        "https://prettylinks.com/wp-content/uploads/2019/06/Social-Media-Integration@2x-1024x745.png",
-                        errorBuilder: (context, error, stackTrace) {
-                          return Expanded(
-                            child: Container(
-                              color: Colors.red,
-                            ),
-                          );
-                        },
+                    ? Image.asset(
+                        "assets/media.png",
                         frameBuilder:
                             (context, child, frame, wasSynchronouslyLoaded) {
                           return Container(

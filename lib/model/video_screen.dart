@@ -4,7 +4,7 @@ class VideoModel {
   String title;
   String platform;
   String thumbnailLink;
-  List<VideoLinkModel> downloadLink;
+  List<List<VideoLinkModel>> downloadLink;
   VideoModel({
     required this.title,
     required this.platform,
