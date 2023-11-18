@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
+import 'package:get/route_manager.dart';
 import 'package:salomon_bottom_bar/salomon_bottom_bar.dart';
+import 'package:viberloader/screens/settings.dart';
 import '/screens/downloads.dart';
 import '/screens/home_body.dart';
 
@@ -20,19 +21,16 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
-    SystemChrome.setSystemUIOverlayStyle(
-      SystemUiOverlayStyle(
-        systemNavigationBarColor: Theme.of(context).colorScheme.primary,
-      ),
-    );
     return Scaffold(
       resizeToAvoidBottomInset: false,
       appBar: AppBar(
         actions: [
           IconButton(
-            onPressed: () {},
+            onPressed: () {
+              Get.to(() => const Settings());
+            },
             icon: const Icon(
-              Icons.settings_suggest_rounded,
+              Icons.settings_rounded,
             ),
           ),
         ],

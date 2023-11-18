@@ -8,12 +8,16 @@ class CustomButton extends StatefulWidget {
   final IconData icon;
   final Color color;
   final VoidCallback onPressed;
+  final double height;
+  final double width;
   const CustomButton(
       {super.key,
       required this.icon,
       required this.childText,
       required this.color,
-      required this.onPressed});
+      required this.onPressed,
+      required this.height,
+      required this.width});
 
   @override
   State<CustomButton> createState() => _CustomButtonState();
@@ -38,8 +42,8 @@ class _CustomButtonState extends State<CustomButton> {
             widget.onPressed();
           },
           child: Container(
-            height: Get.height * .08,
-            width: Get.width * .9,
+            height: widget.height,
+            width: widget.width,
             decoration: BoxDecoration(
               color:
                   buttonState ? widget.color : Color(widget.color.value - 90),

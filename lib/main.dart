@@ -1,15 +1,35 @@
+import 'dart:io';
 import 'dart:isolate';
 import 'dart:ui';
+import 'package:feedback/feedback.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_downloader/flutter_downloader.dart';
 import 'package:get/get.dart';
+import 'package:hive/hive.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import '/screens/splash.dart';
+import '/functions/gat_path.dart';
 import '/functions/permission.dart';
-import 'screens/home.dart';
 
+bool isDark = false;
+late SharedPreferences preferences;
+late Directory externalDir;
+late Directory directory;
+late Box box;
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  preferences = await SharedPreferences.getInstance();
   await FlutterDownloader.initialize(debug: true, ignoreSsl: true);
-  runApp(const App());
+  Hive.init(
+    (await getApplicationDocumentsDirectory()).path,
+  );
+  await Hive.openBox("Thumbs");
+  runApp(
+    const BetterFeedback(
+      child: App(),
+    ),
+  );
 }
 
 class App extends StatefulWidget {
@@ -25,6 +45,10 @@ class _AppState extends State<App> {
   @override
   void initState() {
     getStoragePermission();
+    isDark = preferences.getBool("isDark") ?? false;
+    box = Hive.box("Thumbs");
+    setState(() {});
+    getStoragePath();
     super.initState();
     IsolateNameServer.registerPortWithName(
         _port.sendPort, 'downloader_send_port');
@@ -47,16 +71,25 @@ class _AppState extends State<App> {
   @override
   Widget build(BuildContext context) {
     return GetMaterialApp(
-      theme: ThemeData(
+      darkTheme: ThemeData(
         colorScheme: ColorScheme.fromSeed(
+          brightness: Brightness.dark,
           seedColor: Colors.red,
-          // seedColor: Colors.lime,
-          brightness: Brightness.light,
+          // seedColor: Colors.purple,
         ),
         useMaterial3: true,
       ),
+      theme: ThemeData(
+        colorScheme: ColorScheme.fromSeed(
+          brightness: Brightness.light,
+          seedColor: Colors.red,
+          // seedColor: Colors.purple,
+        ),
+        useMaterial3: true,
+      ),
+      themeMode: ThemeMode.light,
       debugShowCheckedModeBanner: false,
-      home: const HomePage(),
+      home: const SplashScreen(),
     );
   }
 }

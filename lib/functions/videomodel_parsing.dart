@@ -23,15 +23,18 @@ Future<VideoModel> parseVideoData(String rawResponse) async {
         "link",
       ],
     );
-    final videoLink = VideoLinkModel(
-      link: link["url"],
-      size: link["size"],
-      quality: quality,
-    );
-    if (quality.split(" ").first == "MP4") {
-      videoLinks.add(videoLink);
-    } else {
-      audioLinks.add(videoLink);
+    if (link["url"].toString().split(".").last != "m3u8") {
+      final videoLink = VideoLinkModel(
+        link: link["url"],
+        size: link["size"],
+        quality: quality,
+      );
+      if (quality.split(" ").first == "MP4" ||
+          quality.split(" ").first == "Watermarked") {
+        videoLinks.add(videoLink);
+      } else {
+        audioLinks.add(videoLink);
+      }
     }
   }
   return VideoModel(
