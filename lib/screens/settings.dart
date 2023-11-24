@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '/functions/settings_functions.dart';
 import '/data/settings.dart';
+import 'splash.dart';
 
 class Settings extends StatefulWidget {
   const Settings({super.key});
@@ -12,11 +13,22 @@ class Settings extends StatefulWidget {
 
 class _SettingsState extends State<Settings> {
   @override
+  void dispose() {
+    if (isLoaded) {
+      adService.showInterstitialAd(() {
+        adService.interstitialAdLoad();
+      });
+    } else {
+      adService.interstitialAdLoad();
+    }
+    super.dispose();
+  }
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: const Text(
-          "Settings",
+          "Preferences",
         ),
       ),
       body: Padding(
@@ -55,7 +67,7 @@ class _SettingsState extends State<Settings> {
             const Align(
               alignment: Alignment.bottomCenter,
               child: Text(
-                "Version .6.6.6",
+                "Version 1.0.0",
               ),
             )
           ],

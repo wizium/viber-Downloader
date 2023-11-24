@@ -42,7 +42,7 @@ getData(String userUrl, BuildContext context) async {
 
 void getVideoData(
     {required String extractedUrl,
-    String k_page = "Home",
+    String  kpage = "Home",
     required BuildContext context}) async {
   final headers = {
     'Accept': '*/*',
@@ -66,7 +66,7 @@ void getVideoData(
 
   final data = {
     'k_query': extractedUrl,
-    'k_page': k_page,
+    'k_page': kpage,
     'hl': 'en',
     'q_auto': '1',
   };
@@ -78,6 +78,10 @@ void getVideoData(
     if (status != 200) throw Exception('http.post error: statusCode= $status');
     if (jsonDecode(res.body)["mess"] == "") {
       final responseData = await parseVideoData(res.body);
+      Get.snackbar(
+        "Video Found",
+        "😇",
+      );
       Get.to(
         DownloadScreen(
           videoModel: responseData,
@@ -90,7 +94,7 @@ void getVideoData(
       debugPrint(newPage);
       getVideoData(
         extractedUrl: extractedUrl,
-        k_page: newPage,
+        kpage: newPage,
         context: context,
       );
       appStates.toggleLoading();

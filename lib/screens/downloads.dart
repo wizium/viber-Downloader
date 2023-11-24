@@ -27,11 +27,10 @@ class DownloadsState extends State<Downloads> {
           await FlutterDownloader.cancelAll();
           await FlutterDownloader.loadTasks().then(
             (value) async {
-              int num = 0;
               for (var i in value!) {
-                FlutterDownloader.remove(taskId: i.taskId);
-                await box.deleteAt(num);
-                num++;
+                FlutterDownloader.remove(
+                    taskId: i.taskId, shouldDeleteContent: true);
+                await box.deleteAll(box.keys);
               }
             },
           );
@@ -80,10 +79,6 @@ class DownloadsState extends State<Downloads> {
                                       image: DecorationImage(
                                         image: imageProvider,
                                         fit: BoxFit.cover,
-                                        colorFilter: const ColorFilter.mode(
-                                          Colors.red,
-                                          BlendMode.colorBurn,
-                                        ),
                                       ),
                                     ),
                                   ),
@@ -91,7 +86,9 @@ class DownloadsState extends State<Downloads> {
                                 placeholder: (context, url) =>
                                     const CircularProgressIndicator(),
                                 errorWidget: (context, url, error) =>
-                                    const Icon(Icons.error),
+                                    const Icon(
+                                  Icons.signal_cellular_nodata_rounded,
+                                ),
                               ),
                               onTap: status == DownloadTaskStatus.complete
                                   ? (() {
@@ -126,14 +123,11 @@ class DownloadsState extends State<Downloads> {
                                         ),
                                       ],
                                     ),
-                              trailing: SizedBox(
-                                width: Get.width * .2,
-                                child: buttons(
-                                  status,
-                                  id,
-                                  i,
-                                  downloadsListMaps.length,
-                                ),
+                              trailing: buttons(
+                                status,
+                                id,
+                                i,
+                                downloadsListMaps.length,
                               ),
                             ),
                             const Divider(

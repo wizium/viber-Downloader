@@ -52,7 +52,10 @@ dependencies:
   url_launcher:
   flutter_onboarding_slider:
   shared_preferences:
-  hive: ^2.2.3
+  hive:
+  animated_text_kit:
+  device_info_plus:
+  unity_ads_plugin:
 dev_dependencies:
   flutter_test:
     sdk: flutter

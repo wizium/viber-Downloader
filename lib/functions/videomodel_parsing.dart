@@ -1,4 +1,6 @@
 import 'dart:convert';
+import 'package:get/get.dart';
+
 import '/model/video_links.dart';
 import '/model/video_screen.dart';
 
@@ -14,7 +16,7 @@ Future<VideoModel> parseVideoData(String rawResponse) async {
   List<VideoLinkModel> videoLinks = [];
   List<VideoLinkModel> audioLinks = [];
   for (var link in links) {
-    final quality = removeCharsFromString(
+    List<String> quality = removeCharsFromString(
       link["q_text"].toString(),
       [
         "[",
@@ -22,17 +24,33 @@ Future<VideoModel> parseVideoData(String rawResponse) async {
         "-",
         "link",
       ],
-    );
+    ).split(" ");
+
+    if (quality.last.isNumericOnly) {
+      quality.removeLast();
+    }
+    final newQuality = quality.join(" ");
     if (link["url"].toString().split(".").last != "m3u8") {
       final videoLink = VideoLinkModel(
         link: link["url"],
         size: link["size"],
-        quality: quality,
+        quality: newQuality,
       );
-      if (quality.split(" ").first == "MP4" ||
-          quality.split(" ").first == "Watermarked") {
+      if (newQuality.split(" ").first == "MP4" ||
+          newQuality.split(" ").first == "Watermarked") {
+        if (videoLinks.isNotEmpty) {
+          if (newQuality == videoLinks.last.quality) {
+            videoLinks.removeLast();
+          }
+        }
         videoLinks.add(videoLink);
+      } else if (newQuality.split(" ").first == "JPG") {
       } else {
+        if (audioLinks.isNotEmpty) {
+          if (newQuality == audioLinks.last.quality) {
+            audioLinks.removeLast();
+          }
+        }
         audioLinks.add(videoLink);
       }
     }

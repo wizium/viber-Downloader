@@ -27,7 +27,7 @@ class _CustomButtonState extends State<CustomButton> {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: EdgeInsets.symmetric(vertical: Get.height * .015),
+      padding: EdgeInsets.symmetric(vertical: Get.height * .01),
       child: ClipRRect(
         borderRadius: BorderRadius.circular(10),
         child: InkWell(

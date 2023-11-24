@@ -1,3 +1,5 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
@@ -109,7 +111,7 @@ class _HomeBodyState extends State<HomeBody> {
                           ElevatedButton.icon(
                             onPressed: downloadLink.text.isNotEmpty
                                 ? () async {
-                                    getStoragePermission();
+                                    await getStoragePermission(context);
                                     appStates.toggleLoading();
                                     getData(downloadLink.text, context);
                                   }
@@ -125,25 +127,29 @@ class _HomeBodyState extends State<HomeBody> {
                       ),
                     ),
                     orientation == Orientation.portrait
-                        ? Image.asset(
-                            "assets/media.png",
-                            frameBuilder: (context, child, frame,
-                                wasSynchronouslyLoaded) {
-                              return Container(
-                                decoration: BoxDecoration(
-                                  border: Border.all(
-                                    color:
-                                        Theme.of(context).colorScheme.primary,
-                                    width: 3,
+                        ? Expanded(
+                            child: Image.asset(
+                              "assets/media.png",
+                              width: double.infinity,
+                              fit: BoxFit.cover,
+                              frameBuilder: (context, child, frame,
+                                  wasSynchronouslyLoaded) {
+                                return Container(
+                                  decoration: BoxDecoration(
+                                    border: Border.all(
+                                      color:
+                                          Theme.of(context).colorScheme.primary,
+                                      width: 3,
+                                    ),
+                                    borderRadius: BorderRadius.circular(15),
                                   ),
-                                  borderRadius: BorderRadius.circular(15),
-                                ),
-                                child: ClipRRect(
-                                  borderRadius: BorderRadius.circular(11),
-                                  child: child,
-                                ),
-                              );
-                            },
+                                  child: ClipRRect(
+                                    borderRadius: BorderRadius.circular(11),
+                                    child: child,
+                                  ),
+                                );
+                              },
+                            ),
                           )
                         : const SizedBox(),
                   ],

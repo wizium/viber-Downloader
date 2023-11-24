@@ -120,7 +120,7 @@ videoListing(
                                 );
                               } else {
                                 try {
-                                  name = videoList.title.substring(0, 40);
+                                  name = videoList.title.substring(0, 30);
                                 } catch (e) {
                                   name = DateTime.now()
                                       .millisecondsSinceEpoch
@@ -138,7 +138,7 @@ videoListing(
                               Icons.download_rounded,
                             ),
                             label: Text(
-                              stream ? "Stream on chrome" : "Download",
+                              stream ? "Stream Online" : "Download",
                             ),
                           ),
                         ),

@@ -8,10 +8,11 @@ import 'package:get/get.dart';
 import 'package:hive/hive.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:unity_ads_plugin/unity_ads_plugin.dart';
 import '/screens/splash.dart';
-import '/functions/gat_path.dart';
-import '/functions/permission.dart';
+import 'services/ad_service.dart';
 
+bool isPro = true;
 bool isDark = false;
 late SharedPreferences preferences;
 late Directory externalDir;
@@ -25,6 +26,12 @@ void main() async {
     (await getApplicationDocumentsDirectory()).path,
   );
   await Hive.openBox("Thumbs");
+  await UnityAds.init(
+    testMode: false,
+    gameId: AdServices.appId,
+    onComplete: () => debugPrint("Unity gameId is Initialized"),
+    onFailed: (error, errorMessage) => debugPrint(errorMessage),
+  );
   runApp(
     const BetterFeedback(
       child: App(),
@@ -44,11 +51,9 @@ ReceivePort _port = ReceivePort();
 class _AppState extends State<App> {
   @override
   void initState() {
-    getStoragePermission();
-    isDark = preferences.getBool("isDark") ?? false;
+    isDark = preferences.getBool("isDark") ?? true;
     box = Hive.box("Thumbs");
     setState(() {});
-    getStoragePath();
     super.initState();
     IsolateNameServer.registerPortWithName(
         _port.sendPort, 'downloader_send_port');
@@ -75,9 +80,13 @@ class _AppState extends State<App> {
         colorScheme: ColorScheme.fromSeed(
           brightness: Brightness.dark,
           seedColor: Colors.red,
+          background: Colors.black,
           // seedColor: Colors.purple,
         ),
         useMaterial3: true,
+        appBarTheme: const AppBarTheme(
+          color: Colors.black,
+        ),
       ),
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(

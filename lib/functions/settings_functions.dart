@@ -15,7 +15,18 @@ import '/screens/onbaording.dart';
 
 List<Function> settingFunctions = [
   (context) {
-    Get.isDarkMode ? Get.changeThemeMode(ThemeMode.light) : null;
+    Get.isDarkMode
+        ? {
+            Get.changeThemeMode(ThemeMode.light),
+            SystemChrome.setSystemUIOverlayStyle(
+              SystemUiOverlayStyle(
+                systemNavigationBarColor:
+                    Theme.of(context).colorScheme.inversePrimary,
+              ),
+            )
+          }
+        : null;
+
     Get.to(const OnBoarding());
   },
   (context) async {
@@ -58,7 +69,7 @@ List<Function> settingFunctions = [
   (context) async {
     await launchUrl(
       Uri.parse(
-        "https://www.google.com",
+        "https://sites.google.com/view/viberdownloader",
       ),
       mode: LaunchMode.inAppWebView,
     );
@@ -103,7 +114,7 @@ List<Function> settingFunctions = [
         RichText(
           text: TextSpan(
             text: "Developed by: ",
-            style: Theme.of(context).textTheme.bodySmall,
+            style: Theme.of(context).textTheme.bodyMedium,
             children: [
               TextSpan(
                 recognizer: TapGestureRecognizer()
@@ -145,8 +156,13 @@ List<Function> settingFunctions = [
                   color: Colors.blue,
                 ),
                 recognizer: TapGestureRecognizer()
-                  ..onTap = () {
-                    settingFunctions[6]();
+                  ..onTap = () async {
+                    await launchUrl(
+                      Uri.parse(
+                        "https://sites.google.com/view/viberdownloader",
+                      ),
+                      mode: LaunchMode.inAppWebView,
+                    );
                   },
               ),
             ],

@@ -3,7 +3,7 @@ import 'package:viberloader/screens/download.dart';
 import '/widget/video_listing.dart';
 import '/widget/custom_buttons.dart';
 
-lowerDownloadBody(context, height, width,videoModel) {
+List<Widget> lowerDownloadBody(context, height, width, videoModel) {
   return [
     CustomButton(
       height: height,
@@ -23,6 +23,7 @@ lowerDownloadBody(context, height, width,videoModel) {
         );
       },
     ),
+    
     CustomButton(
       height: height,
       width: width,
@@ -45,7 +46,7 @@ lowerDownloadBody(context, height, width,videoModel) {
       height: height,
       width: width,
       icon: Icons.stream,
-      childText: "Stream adFree",
+      childText: "Watch Online",
       color: Colors.deepPurple,
       onPressed: () {
         videoListing(
