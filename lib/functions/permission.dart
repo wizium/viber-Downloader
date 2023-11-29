@@ -19,14 +19,6 @@ Future<void> getStoragePermission(BuildContext context) async {
       "This app requires access to notifications to download videos for you. Please grant the necessary permissions.",
     );
   }
-  if (androidVersion >= 11) {
-    await _checkAndAskForPermission(
-      context,
-      "Manage External Storage Permission",
-      Permission.manageExternalStorage,
-      "This app requires access to manage external storage to download videos for you. Please grant the necessary permissions.",
-    );
-  }
   await _checkAndAskForPermission(
     context,
     "Storage Permission",

@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:viberloader/screens/splash.dart';
-import 'package:viberloader/widget/lower_download_body.dart';
+import '/widget/lower_download_body.dart';
 import '/widget/download_upper_body.dart';
 import '/model/video_screen.dart';
 
@@ -19,13 +18,6 @@ class DownloadScreen extends StatefulWidget {
 class _DownloadScreenState extends State<DownloadScreen> {
   @override
   void initState() {
-    if (isLoaded) {
-      adService.showInterstitialAd(() {
-        adService.interstitialAdLoad();
-      });
-    } else {
-      adService.interstitialAdLoad();
-    }
     setState(() {
       platform = widget.videoModel.platform.split("-")[0].toUpperCase();
     });

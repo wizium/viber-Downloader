@@ -1,12 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:get/route_manager.dart';
 import 'package:salomon_bottom_bar/salomon_bottom_bar.dart';
-import 'package:viberloader/screens/settings.dart';
+import 'package:viberloader/functions/gat_path.dart';
+import 'package:viberloader/functions/permission.dart';
 import 'package:viberloader/screens/splash.dart';
+import 'package:viberloader/widget/home_drawer.dart';
 import '/screens/downloads.dart';
 import '/screens/home_body.dart';
 
+GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
 int navBarIndex = 0;
 TextEditingController downloadLink = TextEditingController();
 String? clipboardText;
@@ -23,6 +25,8 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
+    getStoragePermission(context);
+    getStoragePath();
     return WillPopScope(
       onWillPop: () async {
         if (isLoaded) {
@@ -35,18 +39,18 @@ class _HomePageState extends State<HomePage> {
         return false;
       },
       child: Scaffold(
+        key: scaffoldKey,
+        drawer: const HomeDrawer(),
         resizeToAvoidBottomInset: false,
         appBar: AppBar(
-          actions: [
-            IconButton(
-              onPressed: () {
-                Get.to(const Settings());
-              },
-              icon: const Icon(
-                Icons.settings_rounded,
-              ),
+          leading: IconButton(
+            icon: const Icon(
+              Icons.menu_rounded,
             ),
-          ],
+            onPressed: () {
+              scaffoldKey.currentState!.openDrawer();
+            },
+          ),
           centerTitle: true,
           title: Text(
             screenTitles[navBarIndex],

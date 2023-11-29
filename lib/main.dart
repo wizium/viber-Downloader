@@ -1,23 +1,30 @@
+import 'dart:async';
 import 'dart:io';
 import 'dart:isolate';
 import 'dart:ui';
 import 'package:feedback/feedback.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_downloader/flutter_downloader.dart';
 import 'package:get/get.dart';
 import 'package:hive/hive.dart';
+import 'package:in_app_purchase/in_app_purchase.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:unity_ads_plugin/unity_ads_plugin.dart';
 import '/screens/splash.dart';
+import 'firebase_options.dart';
 import 'services/ad_service.dart';
+import 'services/purchase.dart';
 
-bool isPro = true;
+List<ProductDetails> products = [];
+const Set<String> kProductIds = {"1_year_pro"};
 bool isDark = false;
 late SharedPreferences preferences;
 late Directory externalDir;
 late Directory directory;
 late Box box;
+late StreamSubscription inAppPurchaseSubscription;
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   preferences = await SharedPreferences.getInstance();
@@ -31,6 +38,9 @@ void main() async {
     gameId: AdServices.appId,
     onComplete: () => debugPrint("Unity gameId is Initialized"),
     onFailed: (error, errorMessage) => debugPrint(errorMessage),
+  );
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
   );
   runApp(
     const BetterFeedback(
@@ -54,6 +64,20 @@ class _AppState extends State<App> {
     isDark = preferences.getBool("isDark") ?? true;
     box = Hive.box("Thumbs");
     setState(() {});
+    Stream purchaseUpdate = inAppPurchase.purchaseStream;
+    inAppPurchaseSubscription = purchaseUpdate.listen(
+      (event) {
+        listenToPurchase(event);
+      },
+      onDone: () {
+        inAppPurchaseSubscription.cancel();
+      },
+      onError: (e) {
+        debugPrint(
+          "Purchase stream got error $e",
+        );
+      },
+    );
     super.initState();
     IsolateNameServer.registerPortWithName(
         _port.sendPort, 'downloader_send_port');

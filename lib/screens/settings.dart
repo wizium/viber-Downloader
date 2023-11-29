@@ -23,6 +23,7 @@ class _SettingsState extends State<Settings> {
     }
     super.dispose();
   }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -45,8 +46,8 @@ class _SettingsState extends State<Settings> {
                       ListTile(
                         onTap: () {
                           settingFunctions[index](context);
+                          setState(() {});
                         },
-                        // trailing: const Icon(null),
                         leading: Icon(settingsIcons[index]),
                         title: Text(
                           settingsTitles[index],

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:viberloader/functions/download.dart';
 import 'package:viberloader/screens/stream_free.dart';
+import '/screens/splash.dart';
 import '/model/video_screen.dart';
 import '/stateControllers/state_controllers.dart';
 
@@ -47,13 +48,13 @@ videoListing(
                           leading: isTiktok
                               ? Image.asset(
                                   "assets/facebook.png",
-                                  scale: 7,
+                                  scale: 5,
                                 )
                               : Image.asset(
                                   isAudio == 0
                                       ? "assets/facebook.png"
                                       : "assets/mp3.png",
-                                  scale: 7,
+                                  scale: 5,
                                 ),
                           trailing: Radio.adaptive(
                             groupValue: appStates.selectedVideo.value,
@@ -125,6 +126,13 @@ videoListing(
                                   name = DateTime.now()
                                       .millisecondsSinceEpoch
                                       .toString();
+                                }
+                                if (isLoaded) {
+                                  adService.showInterstitialAd(() {
+                                    adService.interstitialAdLoad();
+                                  });
+                                } else {
+                                  adService.interstitialAdLoad();
                                 }
                                 startDownload(
                                   url,

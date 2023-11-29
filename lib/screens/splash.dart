@@ -6,6 +6,7 @@ import 'package:viberloader/screens/home.dart';
 import "package:animated_text_kit/animated_text_kit.dart";
 import 'package:viberloader/screens/onbaording.dart';
 import 'package:viberloader/services/ad_service.dart';
+import 'package:viberloader/services/state.dart';
 
 late AdServices adService;
 bool isLoaded = false;
@@ -23,6 +24,7 @@ class _SplashScreenState extends State<SplashScreen> {
   @override
   void initState() {
     super.initState();
+    isPro.init();
     adService = AdServices();
     adService.interstitialAdLoad();
     setState(() {});

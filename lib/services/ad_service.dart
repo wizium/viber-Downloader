@@ -1,15 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:unity_ads_plugin/unity_ads_plugin.dart';
-import 'package:viberloader/main.dart';
 import 'package:viberloader/screens/splash.dart';
-
+import 'state.dart';
 class AdServices {
   static String appId = "5481389";
   static String bannerAdUnitId = "Banner_Android";
   static String interstitialAdUnitId = "Interstitial_Android";
 
   void interstitialAdLoad() async {
-    if (!isPro) {
+    if (!isPro.isPro.value) {
       await UnityAds.load(
         placementId: interstitialAdUnitId,
         onComplete: (placementId) {
@@ -28,7 +27,7 @@ class AdServices {
   }
 
   Future<void> showInterstitialAd(Function onComplete) async {
-    if (!isPro) {
+    if (!isPro.isPro.value) {
       await UnityAds.showVideoAd(
         placementId: AdServices.interstitialAdUnitId,
         onComplete: (placementId) {

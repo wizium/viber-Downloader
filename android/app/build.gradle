@@ -62,7 +62,11 @@ android {
    }
 
 }
+dependencies {
+    def billingVersion = "6.1.0"
 
+    implementation "com.android.billingclient:billing:$billingVersion"
+}
 flutter {
     source '../..'
 }

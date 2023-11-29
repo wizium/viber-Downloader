@@ -70,7 +70,7 @@ class DownloadsState extends State<Downloads> {
                                     box.getAt(downloadsListMaps.length - i - 1),
                                 imageBuilder: (context, imageProvider) =>
                                     ClipRRect(
-                                  borderRadius: BorderRadius.circular(20),
+                                  borderRadius: BorderRadius.circular(5),
                                   child: Container(
                                     width: orientation == Orientation.portrait
                                         ? Get.width * .25

@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "586189594815",
+    "project_id": "viber-video-downloader",
+    "storage_bucket": "viber-video-downloader.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:586189594815:android:b3212b2844f23b0eb3260a",
+        "android_client_info": {
+          "package_name": "com.wizium.viber.downloader"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBF_lcMwQDSj1USfZX2virlVxvjiKhVlJE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
