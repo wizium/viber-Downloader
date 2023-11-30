@@ -23,103 +23,105 @@ class HomeDrawerState extends State<HomeDrawer> {
   Widget build(BuildContext context) {
     return Drawer(
       backgroundColor: Theme.of(context).colorScheme.primary,
-      child: SingleChildScrollView(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            if (auth.currentUser != null)
-              (UserAccountsDrawerHeader(
-                otherAccountsPictures: [
-                  Obx(
-                    () {
-                      return Icon(
-                        isPro.isPro.value
-                            ? Icons.workspace_premium_rounded
-                            : null,
-                        size: 40,
-                        color: Theme.of(context).colorScheme.inversePrimary,
-                      );
-                    },
+      child: SafeArea(
+        child: SingleChildScrollView(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              if (auth.currentUser != null)
+                (UserAccountsDrawerHeader(
+                  otherAccountsPictures: [
+                    Obx(
+                      () {
+                        return Icon(
+                          isPro.isPro.value
+                              ? Icons.workspace_premium_rounded
+                              : null,
+                          size: 40,
+                          color: Theme.of(context).colorScheme.inversePrimary,
+                        );
+                      },
+                    ),
+                  ],
+                  currentAccountPicture: ClipRRect(
+                    borderRadius: BorderRadius.circular(20),
+                    child: CachedNetworkImage(
+                        imageUrl: auth.currentUser!.photoURL.toString()),
                   ),
-                ],
-                currentAccountPicture: ClipRRect(
-                  borderRadius: BorderRadius.circular(20),
-                  child: CachedNetworkImage(
-                      imageUrl: auth.currentUser!.photoURL.toString()),
+                  accountName: Text(
+                    auth.currentUser!.displayName.toString(),
+                  ),
+                  accountEmail: Text(
+                    auth.currentUser!.email.toString(),
+                  ),
+                ))
+              else
+                Card(
+                  child: ListTile(
+                    onTap: () {
+                      signInCheck();
+                    },
+                    leading: const Icon(
+                      Icons.account_circle_rounded,
+                      size: 40,
+                    ),
+                    title: const Center(
+                      child: Text(
+                        "Login",
+                      ),
+                    ),
+                  ),
                 ),
-                accountName: Text(
-                  auth.currentUser!.displayName.toString(),
-                ),
-                accountEmail: Text(
-                  auth.currentUser!.email.toString(),
-                ),
-              ))
-            else
+              Obx(() {
+                return isPro.isPro.value != true
+                    ? Card(
+                        child: ListTile(
+                          leading: const Icon(
+                            Icons.workspace_premium_rounded,
+                            size: 40,
+                          ),
+                          title: const Text("Remove ads"),
+                          onTap: () async {
+                            buy(product: products[0]);
+                          },
+                        ),
+                      )
+                    : const SizedBox();
+              }),
               Card(
                 child: ListTile(
-                  onTap: () {
-                    signInCheck();
-                  },
                   leading: const Icon(
-                    Icons.account_circle_rounded,
+                    Icons.settings_suggest_rounded,
                     size: 40,
                   ),
-                  title: const Center(
-                    child: Text(
-                      "Login",
-                    ),
-                  ),
+                  title: const Text("Preferences"),
+                  onTap: () {
+                    Get.to(const setting.Settings());
+                  },
                 ),
               ),
-            Obx(() {
-              return isPro.isPro.value != true
+              const Divider(),
+              auth.currentUser != null
                   ? Card(
                       child: ListTile(
-                        leading: const Icon(
-                          Icons.workspace_premium_rounded,
-                          size: 40,
-                        ),
-                        title: const Text("Remove ads"),
                         onTap: () async {
-                          buy(product: products[0]);
+                          await auth.signOut();
+                          await GoogleSignIn().signOut();
+                          preferences.remove("endDate");
+                          preferences.setBool("isPro", false);
+                          isPro.init();
+                          await signInCheck();
                         },
+                        title: const Center(
+                          child: Text(
+                            "Logout",
+                          ),
+                        ),
                       ),
                     )
-                  : const SizedBox();
-            }),
-            Card(
-              child: ListTile(
-                leading: const Icon(
-                  Icons.settings_suggest_rounded,
-                  size: 40,
-                ),
-                title: const Text("Preferences"),
-                onTap: () {
-                  Get.to(const setting.Settings());
-                },
-              ),
-            ),
-            const Divider(),
-            auth.currentUser != null
-                ? Card(
-                    child: ListTile(
-                      onTap: () async {
-                        await auth.signOut();
-                        await GoogleSignIn().signOut();
-                        preferences.remove("endDate");
-                        preferences.setBool("isPro", false);
-                        isPro.init();
-                        await signInCheck();
-                      },
-                      title: const Center(
-                        child: Text(
-                          "Logout",
-                        ),
-                      ),
-                    ),
-                  )
-                : const SizedBox(),
-          ],
+                  : const SizedBox(),
+            ],
+          ),
         ),
       ),
     );

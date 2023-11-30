@@ -34,11 +34,7 @@ listenToPurchase(List<PurchaseDetails> purchaseDetails) async {
         endDate.toDate().toString(),
       );
       subscriptionCheck(
-        Timestamp.fromDate(
-          DateTime.now().add(
-            const Duration(days: 365),
-          ),
-        ),
+        endDate,
       );
       debugPrint("purchased");
     }

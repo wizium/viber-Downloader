@@ -2,7 +2,7 @@
 
 import "package:flutter/material.dart";
 import 'package:get/get.dart';
-import 'dart:convert';
+// import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:viberloader/widget/error_bottom_sheet.dart';
 import 'package:viberloader/widget/video_listing.dart';
@@ -27,6 +27,7 @@ getData(String userUrl, BuildContext context) async {
     errorSheet(context,
         errorMessage:
             "Facebook videos downloading is currently not supported. support coming soon.");
+    appStates.toggleLoading();
   } else if (uriHost == "m.youtube.com" ||
       uriHost == "youtu.be" ||
       uriHost == "youtube.com") {
@@ -35,6 +36,7 @@ getData(String userUrl, BuildContext context) async {
       errorMessage:
           "Due to legal restrictions, we can't download videos from YouTube. Please use a different link.",
     );
+    appStates.toggleLoading();
   } else {
     getVideoData(extractedUrl: userUrl, context: context);
   }
@@ -42,7 +44,7 @@ getData(String userUrl, BuildContext context) async {
 
 void getVideoData(
     {required String extractedUrl,
-    String  kpage = "Home",
+    String kpage = "instagram",
     required BuildContext context}) async {
   final headers = {
     'Accept': '*/*',
@@ -76,30 +78,18 @@ void getVideoData(
     final res = await http.post(url, headers: headers, body: data);
     final status = res.statusCode;
     if (status != 200) throw Exception('http.post error: statusCode= $status');
-    if (jsonDecode(res.body)["mess"] == "") {
-      final responseData = await parseVideoData(res.body);
-      Get.snackbar(
-        "Video Found",
-        "😇",
-      );
-      Get.to(
-        DownloadScreen(
-          videoModel: responseData,
-        ),
-      );
-    } else {
-      final linkLength =
-          jsonDecode(res.body)["mess"].toString().split("\"")[1].split("/");
-      final newPage = linkLength[linkLength.length - 2].split("-")[0];
-      debugPrint(newPage);
-      getVideoData(
-        extractedUrl: extractedUrl,
-        kpage: newPage,
-        context: context,
-      );
-      appStates.toggleLoading();
-    }
+    final responseData = await parseVideoData(res.body);
+    Get.snackbar(
+      "Video Found",
+      "😇",
+    );
+    Get.to(
+      DownloadScreen(
+        videoModel: responseData,
+      ),
+    );
   } catch (e) {
+    debugPrint(e.toString());
     errorSheet(
       context,
       errorMessage:
