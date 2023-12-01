@@ -13,6 +13,8 @@ import 'package:share_plus/share_plus.dart';
 import '/main.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '/screens/onbaording.dart';
+
+final version = "1.0.1+11";
 List<Function> settingFunctions = [
   (context) {
     Get.isDarkMode
@@ -108,7 +110,7 @@ Download your favorite videos instantly! 📲✨ Fast, easy, and in HD quality. 
     showAboutDialog(
       context: context,
       applicationName: "Viber video downloader",
-      applicationVersion: "1.0.1+11",
+      applicationVersion: version,
       applicationIcon: Image.asset(
         "assets/download.png",
         height: 40,

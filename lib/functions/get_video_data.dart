@@ -97,7 +97,6 @@ void getVideoData(
           kpage: "Instagram",
           context: context,
         );
-        appStates.stopLoading();
       } else {
         errorSheet(
           context,

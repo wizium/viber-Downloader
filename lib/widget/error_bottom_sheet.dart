@@ -5,6 +5,7 @@ errorSheet(BuildContext context, {required String errorMessage}) {
   Get.bottomSheet(
     Container(
       height: Get.height * .25,
+      width: Get.width,
       decoration: BoxDecoration(
         color: Theme.of(context).colorScheme.background,
         borderRadius: const BorderRadius.only(

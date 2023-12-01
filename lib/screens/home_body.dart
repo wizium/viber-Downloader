@@ -155,10 +155,8 @@ class _HomeBodyState extends State<HomeBody> {
                   ],
                 ),
                 Obx(() {
-                  if (appStates.isLoading.value == true) {
-                    return const Center(
-                      child: LoadingIndicator(),
-                    );
+                  if (appStates.isLoading.value) {
+                    return const LoadingIndicator();
                   } else {
                     return const SizedBox();
                   }
