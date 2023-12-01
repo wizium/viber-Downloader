@@ -1,5 +1,7 @@
 // ignore_for_file: use_build_context_synchronously
 
+import 'dart:convert';
+
 import "package:flutter/material.dart";
 import 'package:get/get.dart';
 // import 'dart:convert';
@@ -44,7 +46,7 @@ getData(String userUrl, BuildContext context) async {
 
 void getVideoData(
     {required String extractedUrl,
-    String kpage = "instagram",
+    String kpage = "Instagram",
     required BuildContext context}) async {
   final headers = {
     'Accept': '*/*',
@@ -78,16 +80,25 @@ void getVideoData(
     final res = await http.post(url, headers: headers, body: data);
     final status = res.statusCode;
     if (status != 200) throw Exception('http.post error: statusCode= $status');
-    final responseData = await parseVideoData(res.body);
-    Get.snackbar(
-      "Video Found",
-      "😇",
-    );
-    Get.to(
-      DownloadScreen(
-        videoModel: responseData,
-      ),
-    );
+    if (jsonDecode(res.body)["mess"] == "") {
+      final responseData = await parseVideoData(res.body);
+      Get.snackbar(
+        "Video Found",
+        "😇",
+      );
+      Get.to(
+        DownloadScreen(
+          videoModel: responseData,
+        ),
+      );
+    } else {
+      getVideoData(
+        extractedUrl: extractedUrl,
+        kpage: "Instagram",
+        context: context,
+      );
+      appStates.toggleLoading();
+    }
   } catch (e) {
     debugPrint(e.toString());
     errorSheet(
