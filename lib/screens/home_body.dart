@@ -112,7 +112,7 @@ class _HomeBodyState extends State<HomeBody> {
                             onPressed: downloadLink.text.isNotEmpty
                                 ? () async {
                                     await getStoragePermission(context);
-                                    appStates.toggleLoading();
+                                    appStates.startLoading();
                                     getData(downloadLink.text, context);
                                   }
                                 : null,

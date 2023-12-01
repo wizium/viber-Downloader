@@ -20,7 +20,7 @@ getData(String userUrl, BuildContext context) async {
       context,
       errorMessage: "Invalid URL Please try again with a valid URL.",
     );
-    appStates.toggleLoading();
+    appStates.startLoading();
     return;
   }
   debugPrint(uriHost);
@@ -28,7 +28,7 @@ getData(String userUrl, BuildContext context) async {
     errorSheet(context,
         errorMessage:
             "Facebook videos downloading is currently not supported. support coming soon.");
-    appStates.toggleLoading();
+    appStates.startLoading();
   } else if (uriHost == "m.youtube.com" ||
       uriHost == "youtu.be" ||
       uriHost == "youtube.com") {
@@ -37,7 +37,7 @@ getData(String userUrl, BuildContext context) async {
       errorMessage:
           "Due to legal restrictions, we can't download videos from YouTube. Please use a different link.",
     );
-    appStates.toggleLoading();
+    appStates.startLoading();
   } else {
     getVideoData(extractedUrl: userUrl, context: context);
   }
@@ -97,13 +97,13 @@ void getVideoData(
           kpage: "Instagram",
           context: context,
         );
-        appStates.toggleLoading();
+        appStates.startLoading();
       } else {
         errorSheet(
           context,
           errorMessage: "Invalid URL Please try again with a valid URL.",
         );
-        appStates.toggleLoading();
+        appStates.startLoading();
         return;
       }
     }
@@ -115,5 +115,5 @@ void getVideoData(
           "There is some issue while fetching data. Please try again later.",
     );
   }
-  appStates.toggleLoading();
+  appStates.startLoading();
 }
