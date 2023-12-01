@@ -108,7 +108,7 @@ Download your favorite videos instantly! 📲✨ Fast, easy, and in HD quality. 
     showAboutDialog(
       context: context,
       applicationName: "Viber video downloader",
-      applicationVersion: "1.0.0",
+      applicationVersion: "1.0.1+11",
       applicationIcon: Image.asset(
         "assets/download.png",
         height: 40,
@@ -190,7 +190,6 @@ Future<void> _pickAndStoreFolder(context) async {
           ),
           TextButton(
             onPressed: () async {
-              Get.back(closeOverlays: true);
               try {
                 String? result = await FilePicker.platform.getDirectoryPath();
                 if (result != null) {

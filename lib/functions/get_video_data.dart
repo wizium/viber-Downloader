@@ -11,15 +11,14 @@ import 'package:viberloader/widget/video_listing.dart';
 import '/functions/videoModel_parsing.dart';
 import 'package:viberloader/screens/download.dart';
 
+late String uriHost;
 getData(String userUrl, BuildContext context) async {
-  String uriHost;
   try {
     uriHost = Uri.parse(userUrl).host;
   } catch (e) {
     errorSheet(
       context,
-      errorMessage:
-          "Invalid URL Please try again.\nAfter that, try again with a valid URL.",
+      errorMessage: "Invalid URL Please try again with a valid URL.",
     );
     appStates.toggleLoading();
     return;
@@ -92,19 +91,28 @@ void getVideoData(
         ),
       );
     } else {
-      getVideoData(
-        extractedUrl: extractedUrl,
-        kpage: "Instagram",
-        context: context,
-      );
-      appStates.toggleLoading();
+      if (uriHost == "www.instagram.com") {
+        getVideoData(
+          extractedUrl: extractedUrl,
+          kpage: "Instagram",
+          context: context,
+        );
+        appStates.toggleLoading();
+      } else {
+        errorSheet(
+          context,
+          errorMessage: "Invalid URL Please try again with a valid URL.",
+        );
+        appStates.toggleLoading();
+        return;
+      }
     }
   } catch (e) {
     debugPrint(e.toString());
     errorSheet(
       context,
       errorMessage:
-          "There is some issue while fetching data.\nMaybe check your internet Connection or Link and try again.",
+          "There is some issue while fetching data. Please try again later.",
     );
   }
   appStates.toggleLoading();

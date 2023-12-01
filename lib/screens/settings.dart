@@ -68,7 +68,7 @@ class _SettingsState extends State<Settings> {
             const Align(
               alignment: Alignment.bottomCenter,
               child: Text(
-                "Version 1.0.0",
+                "Version 1.0.1+11",
               ),
             )
           ],
