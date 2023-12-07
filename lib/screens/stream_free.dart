@@ -5,9 +5,6 @@ import 'package:get/get.dart';
 import 'package:marquee/marquee.dart';
 import 'package:video_player/video_player.dart';
 import 'package:wakelock/wakelock.dart';
-
-import 'splash.dart';
-
 class VideoView extends StatefulWidget {
   final bool isNetwork;
   final String video;
@@ -25,7 +22,6 @@ class _VideoViewState extends State<VideoView> {
 
   @override
   void initState() {
-
     super.initState();
     Wakelock.enable();
     SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky);
@@ -68,13 +64,6 @@ class _VideoViewState extends State<VideoView> {
 
   @override
   void dispose() {
-    if (isLoaded) {
-      adService.showInterstitialAd(() {
-        adService.interstitialAdLoad();
-      });
-    } else {
-      adService.interstitialAdLoad();
-    }
     Wakelock.disable();
     SystemChrome.setEnabledSystemUIMode(
       SystemUiMode.manual,

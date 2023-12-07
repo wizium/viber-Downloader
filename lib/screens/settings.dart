@@ -65,7 +65,7 @@ class _SettingsState extends State<Settings> {
                 },
               ),
             ),
-            Align(
+            const Align(
               alignment: Alignment.bottomCenter,
               child: Text(
                 "Version $version",

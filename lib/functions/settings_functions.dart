@@ -1,7 +1,6 @@
 import 'dart:io';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:feedback/feedback.dart';
-import 'package:file_picker/file_picker.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -14,7 +13,7 @@ import '/main.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '/screens/onbaording.dart';
 
-final version = "1.0.1+11";
+const version = "1.0.2+13";
 List<Function> settingFunctions = [
   (context) {
     Get.isDarkMode
@@ -42,9 +41,6 @@ Download your favorite videos instantly! 📲✨ Fast, easy, and in HD quality. 
     BetterFeedback.of(context).show((feedback) async {
       sendEmail(feedback.screenshot, feedback.text);
     });
-  },
-  (context) {
-    _pickAndStoreFolder(context);
   },
   (context) async {
     Get.isDarkMode
@@ -178,49 +174,6 @@ Download your favorite videos instantly! 📲✨ Fast, easy, and in HD quality. 
     );
   },
 ];
-Future<void> _pickAndStoreFolder(context) async {
-  showDialog(
-    context: context,
-    builder: (BuildContext context) {
-      return AlertDialog(
-        title: const Text('Stored Folder Path'),
-        content: Text(directory.path),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(context).pop(),
-            child: const Text('Close'),
-          ),
-          TextButton(
-            onPressed: () async {
-              try {
-                String? result = await FilePicker.platform.getDirectoryPath();
-                if (result != null) {
-                  directory = Directory("$result/ViberVideos");
-                  Get.snackbar(
-                    "Folder",
-                    "Download path is now ${directory.path}",
-                  );
-                  preferences.setString('picked_folder_path', directory.path);
-                } else {
-                  Get.snackbar(
-                    "Folder",
-                    "Folder picking cancelled.",
-                  );
-                }
-              } catch (e) {
-                Get.snackbar(
-                  "Folder",
-                  "Folder picking cancelled",
-                );
-              }
-            },
-            child: const Text('Pick New Folder'),
-          ),
-        ],
-      );
-    },
-  );
-}
 
 void sendEmail(Uint8List image, messageText) async {
   File tempFile = File("${directory.path}/.Screenshot.png");
