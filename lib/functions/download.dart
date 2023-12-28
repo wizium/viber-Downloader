@@ -7,7 +7,7 @@ import 'package:media_scanner/media_scanner.dart';
 import '/main.dart';
 
 startDownload(url, String name, int isAudio, thumbnailUrl) async {
-  name = name.replaceAll(RegExp(r'[^a-zA-Z0-9. ]'), '').trim();
+  
   if (await File(
           "${directory.path}/${isAudio == 0 ? "$name.mp4" : "$name.mp3"}")
       .exists()) {
@@ -20,6 +20,7 @@ startDownload(url, String name, int isAudio, thumbnailUrl) async {
     await FlutterDownloader.enqueue(
       url: url,
       savedDir: directory.path,
+      saveInPublicStorage: true,
       fileName: isAudio == 0 ? "$name.mp4" : "$name.mp3",
       showNotification: true,
       openFileFromNotification: false,

@@ -129,7 +129,7 @@ class _HomeBodyState extends State<HomeBody> {
                     orientation == Orientation.portrait
                         ? Expanded(
                             child: Image.asset(
-                              "assets/media.jpeg",
+                              "assets/media.jpg",
                               width: double.infinity,
                               fit: BoxFit.cover,
                               frameBuilder: (context, child, frame,

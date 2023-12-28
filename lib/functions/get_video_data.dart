@@ -24,12 +24,13 @@ getData(String userUrl, BuildContext context) async {
     return;
   }
   debugPrint(uriHost);
-  if (uriHost == "fb.watch" || uriHost == "www.facebook.com") {
+  if (uriHost == "www.facebook.com") {
     errorSheet(context,
         errorMessage:
-            "Facebook videos downloading is currently not supported. support coming soon.");
+            "Facebook videos downloading is currently not supported but facebook watch videos can be downloaded with links start from fb.watch");
     appStates.stopLoading();
-  } else if (uriHost == "m.youtube.com" ||
+  } else
+  if (uriHost == "m.youtube.com" ||
       uriHost == "youtu.be" ||
       uriHost == "youtube.com") {
     errorSheet(

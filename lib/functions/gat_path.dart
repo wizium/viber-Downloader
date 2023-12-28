@@ -9,7 +9,7 @@ getStoragePath() async {
   } else {
     externalDir = (await getExternalStorageDirectory())!;
     directory = Directory(
-      "${externalDir.parent.parent.parent.parent.path}/Download/ViberVideos/",
+      "${externalDir.parent.parent.parent.parent.path}/Download",
     );
   }
   if (!(await directory.exists())) {
