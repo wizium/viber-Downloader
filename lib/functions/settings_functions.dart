@@ -13,7 +13,7 @@ import '/main.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '/screens/onbaording.dart';
 
-const version = "1.0.3+14";
+const version = "1.0.4+16";
 List<Function> settingFunctions = [
   (context) {
     Get.isDarkMode
