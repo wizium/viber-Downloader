@@ -1,6 +1,5 @@
 import 'dart:convert';
 import 'package:get/get.dart';
-
 import '/model/video_links.dart';
 import '/model/video_screen.dart';
 
@@ -40,18 +39,26 @@ Future<VideoModel> parseVideoData(String rawResponse) async {
           newQuality.split(" ").first == "Watermarked") {
         if (videoLinks.isNotEmpty) {
           if (newQuality == videoLinks.last.quality) {
+            videoLinks.add(videoLink);
             videoLinks.removeLast();
+          } else {
+            videoLinks.add(videoLink);
           }
+        } else {
+          videoLinks.add(videoLink);
         }
-        videoLinks.add(videoLink);
       } else if (newQuality.split(" ").first == "JPG") {
       } else {
         if (audioLinks.isNotEmpty) {
           if (newQuality == audioLinks.last.quality) {
+            audioLinks.add(videoLink);
             audioLinks.removeLast();
+          } else {
+            audioLinks.add(videoLink);
           }
+        } else {
+          audioLinks.add(videoLink);
         }
-        audioLinks.add(videoLink);
       }
     }
   }
