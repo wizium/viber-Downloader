@@ -1,15 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:get/get.dart';
-import 'package:viberloader/main.dart';
-import 'package:viberloader/screens/home.dart';
+import '../config.dart';
+import '../screens/home.dart';
 import "package:animated_text_kit/animated_text_kit.dart";
-import 'package:viberloader/screens/onbaording.dart';
-import 'package:viberloader/services/ad_service.dart';
-import 'package:viberloader/services/state.dart';
-
-late AdServices adService;
-bool isLoaded = false;
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -19,62 +12,18 @@ class SplashScreen extends StatefulWidget {
 }
 
 class _SplashScreenState extends State<SplashScreen> {
-  final List<String> animatedTexts = ["Viber ", "Video", "Downloader"];
-  int animatedTextIndex = 1;
+  int animatedTextIndex = 0;
   @override
   void initState() {
     super.initState();
-    isPro.init();
-    adService = AdServices();
-    adService.interstitialAdLoad();
-    setState(() {});
-    Future.delayed(const Duration(seconds: 4), () {
-      !isDark
-          ? {
-              Get.changeThemeMode(ThemeMode.dark),
-              SystemChrome.setSystemUIOverlayStyle(
-                SystemUiOverlayStyle(
-                  systemNavigationBarColor:
-                      Theme.of(context).colorScheme.inversePrimary,
-                ),
-              )
-            }
-          : {
-              Get.changeThemeMode(ThemeMode.light),
-              SystemChrome.setSystemUIOverlayStyle(
-                SystemUiOverlayStyle(
-                  systemNavigationBarColor:
-                      Theme.of(context).colorScheme.primary,
-                ),
-              )
-            };
-      final ifFirstTime = preferences.getBool("ifFirstTime") ?? true;
-      if (ifFirstTime) {
-        preferences.setBool("ifFirstTime", false);
-        Get.offAll(
-          const OnBoarding(),
-        );
-      } else {
-        Get.offAll(
-          const HomePage(),
-        );
-      }
-    });
-    _startTextAnimation();
-  }
-
-  void _startTextAnimation() {
-    Future.delayed(const Duration(milliseconds: 500), () {
-      setState(() {
-        animatedTextIndex = 2;
-      });
+    Future.delayed(const Duration(seconds: 2), () {
+      Get.offAll(() => const HomePage());
     });
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.black, // Background color
       body: Center(
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 20.0),
@@ -82,48 +31,35 @@ class _SplashScreenState extends State<SplashScreen> {
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              Container(
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  gradient: LinearGradient(
-                    colors: [
-                      Theme.of(context).colorScheme.primary,
-                      Theme.of(context).colorScheme.secondary,
-                    ],
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
-                  ),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black.withOpacity(0.3),
-                      spreadRadius: 2,
-                      blurRadius: 5,
-                      offset: const Offset(0, 3),
-                    ),
-                  ],
-                ),
-                child: Padding(
-                  padding: const EdgeInsets.all(8.0),
+              Padding(
+                padding: const EdgeInsets.all(gPadding),
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(childBorderRadius),
                   child: Image.asset(
-                    "assets/download.png",
-                    height: 80,
-                    width: 80,
+                    "assets/icon.png",
+                    height: 120,
+                    width: 120,
+                    fit: BoxFit.cover,
                   ),
                 ),
               ),
               const SizedBox(height: 20),
               DefaultTextStyle(
-                style: const TextStyle(
+                style: TextStyle(
                   fontSize: 36.0,
                   fontWeight: FontWeight.bold,
                   letterSpacing: 2.0,
+                  color: Theme.of(context).colorScheme.onSurface,
                 ),
                 child: AnimatedTextKit(
                   isRepeatingAnimation: false,
                   animatedTexts: [
-                    TyperAnimatedText(animatedTexts[0]),
-                    TyperAnimatedText(animatedTexts[1]),
-                    TyperAnimatedText(animatedTexts[2]),
+                    TyperAnimatedText(
+                      "Video Downloader",
+                      textStyle: TextStyle(
+                        color: Theme.of(context).colorScheme.primary,
+                      ),
+                    ),
                   ],
                 ),
               ),

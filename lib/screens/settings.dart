@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
-import '/functions/settings_functions.dart';
+import '../config.dart';
+import '../widget/back_button.dart';
 import '/data/settings.dart';
-import 'splash.dart';
 
 class Settings extends StatefulWidget {
   const Settings({super.key});
@@ -13,33 +12,23 @@ class Settings extends StatefulWidget {
 
 class _SettingsState extends State<Settings> {
   @override
-  void dispose() {
-    if (isLoaded) {
-      adService.showInterstitialAd(() {
-        adService.interstitialAdLoad();
-      });
-    } else {
-      adService.interstitialAdLoad();
-    }
-    super.dispose();
-  }
-
-  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text(
-          "Preferences",
-        ),
+        title: const Text("Preferences"),
+        centerTitle: true,
+        leading: const NewBackButton(),
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(10.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            Expanded(
-              child: ListView.builder(
+      body: SafeArea(
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.all(gPadding),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              ListView.builder(
                 itemCount: settingsTitles.length,
+                shrinkWrap: true,
+                physics: const NeverScrollableScrollPhysics(),
                 itemBuilder: (context, index) {
                   return Column(
                     children: [
@@ -53,25 +42,21 @@ class _SettingsState extends State<Settings> {
                           settingsTitles[index],
                         ),
                       ),
-                      Padding(
-                        padding: const EdgeInsets.only(left: 55, right: 10),
-                        child: Divider(
-                          height: Get.height * .01,
-                          color: Colors.grey.withOpacity(.2),
-                        ),
+                      Divider(
+                        height: 5,
+                        color: Colors.grey.withOpacity(.5),
                       )
                     ],
                   );
                 },
               ),
-            ),
-            const Align(
-              alignment: Alignment.bottomCenter,
-              child: Text(
-                "Version $version",
-              ),
-            )
-          ],
+              const SizedBox(height: gPadding * 3),
+              const Align(
+                alignment: Alignment.bottomCenter,
+                child: Text("Version $version"),
+              )
+            ],
+          ),
         ),
       ),
     );

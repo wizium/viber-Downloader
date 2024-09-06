@@ -1,52 +1,37 @@
 import 'dart:async';
+import 'dart:convert';
 import 'dart:io';
 import 'dart:isolate';
 import 'dart:ui';
 import 'package:feedback/feedback.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_downloader/flutter_downloader.dart';
 import 'package:get/get.dart';
 import 'package:hive/hive.dart';
-import 'package:in_app_purchase/in_app_purchase.dart';
+import 'package:json_theme_plus/json_theme_plus.dart';
 import 'package:path_provider/path_provider.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-import 'package:unity_ads_plugin/unity_ads_plugin.dart';
 import '/screens/splash.dart';
-import 'firebase_options.dart';
-import 'services/ad_service.dart';
-import 'services/purchase.dart';
+import 'stateControllers/state_controllers.dart';
 
-List<ProductDetails> products = [];
-const Set<String> kProductIds = {"1_year_pro"};
-bool isDark = false;
-late SharedPreferences preferences;
 late Directory externalDir;
 late Directory directory;
 late Box box;
-late StreamSubscription inAppPurchaseSubscription;
+ThemeData? lightTheme;
+ThemeData? darkTheme;
+AppStates appStates = Get.put(AppStates());
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  preferences = await SharedPreferences.getInstance();
-  await FlutterDownloader.initialize(debug: true, ignoreSsl: true);
-  Hive.init(
-    (await getApplicationDocumentsDirectory()).path,
-  );
+  Hive.init((await getApplicationDocumentsDirectory()).path);
+  await FlutterDownloader.initialize();
   await Hive.openBox("Thumbs");
-  await UnityAds.init(
-    testMode: false,
-    gameId: AdServices.appId,
-    onComplete: () => debugPrint("Unity gameId is Initialized"),
-    onFailed: (error, errorMessage) => debugPrint(errorMessage),
-  );
-  await Firebase.initializeApp(
-    options: DefaultFirebaseOptions.currentPlatform,
-  );
-  runApp(
-    const BetterFeedback(
-      child: App(),
-    ),
-  );
+  final lThemeStr = await rootBundle.loadString('assets/light_theme.json');
+  final lThemeJson = jsonDecode(lThemeStr);
+  lightTheme = ThemeDecoder.decodeThemeData(lThemeJson)!;
+  final dThemeStr = await rootBundle.loadString('assets/dark_theme.json');
+  final dThemeJson = jsonDecode(dThemeStr);
+  darkTheme = ThemeDecoder.decodeThemeData(dThemeJson)!;
+  runApp(const BetterFeedback(child: App()));
 }
 
 class App extends StatefulWidget {
@@ -61,23 +46,7 @@ ReceivePort _port = ReceivePort();
 class _AppState extends State<App> {
   @override
   void initState() {
-    isDark = preferences.getBool("isDark") ?? true;
     box = Hive.box("Thumbs");
-    setState(() {});
-    Stream purchaseUpdate = inAppPurchase.purchaseStream;
-    inAppPurchaseSubscription = purchaseUpdate.listen(
-      (event) {
-        listenToPurchase(event);
-      },
-      onDone: () {
-        inAppPurchaseSubscription.cancel();
-      },
-      onError: (e) {
-        debugPrint(
-          "Purchase stream got error $e",
-        );
-      },
-    );
     super.initState();
     IsolateNameServer.registerPortWithName(
         _port.sendPort, 'downloader_send_port');
@@ -99,28 +68,17 @@ class _AppState extends State<App> {
 
   @override
   Widget build(BuildContext context) {
+    appStates.themeStateUpdate();
     return GetMaterialApp(
-      darkTheme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(
-          brightness: Brightness.dark,
-          seedColor: Colors.red,
-          background: Colors.black,
-          // seedColor: Colors.purple,
-        ),
-        useMaterial3: true,
-        appBarTheme: const AppBarTheme(
-          color: Colors.black,
-        ),
+      darkTheme: darkTheme!.copyWith(
+        listTileTheme:
+            ListTileThemeData(iconColor: darkTheme!.colorScheme.primary),
       ),
-      theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(
-          brightness: Brightness.light,
-          seedColor: Colors.red,
-          // seedColor: Colors.purple,
-        ),
-        useMaterial3: true,
+      theme: lightTheme!.copyWith(
+        listTileTheme:
+            ListTileThemeData(iconColor: lightTheme!.colorScheme.secondary),
       ),
-      themeMode: ThemeMode.light,
+      themeMode: appStates.dark.value ? ThemeMode.dark : ThemeMode.light,
       debugShowCheckedModeBanner: false,
       home: const SplashScreen(),
     );

@@ -1,0 +1,9 @@
+const double gPadding = 8;
+const String appName = "Video Downloader";
+const version = "2.0.0+17";
+const double buttonHeight = 50;
+const double fieldHeight = 60;
+const double childBorderRadius = 20;
+const double parentBorderRadius = 25;
+const String appLink =
+    "https://play.google.com/store/apps/details?id=com.wizium.lushlayers";

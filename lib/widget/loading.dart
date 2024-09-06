@@ -16,9 +16,7 @@ class _LoadingIndicatorState extends State<LoadingIndicator> {
       height: Get.height,
       decoration: const BoxDecoration(
         borderRadius: BorderRadius.all(
-          Radius.circular(
-            12,
-          ),
+          Radius.circular(12),
         ),
       ),
       child: Center(

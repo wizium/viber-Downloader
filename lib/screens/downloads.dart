@@ -1,12 +1,18 @@
-import 'package:cached_network_image/cached_network_image.dart';
+import 'dart:io';
+
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_downloader/flutter_downloader.dart';
 import 'package:get/get.dart';
-import 'package:viberloader/screens/stream_free.dart';
-import 'package:viberloader/widget/loading.dart';
+import 'package:viberloader/screens/media_player.dart';
+import '../config.dart';
+import '../screens/settings.dart';
+import '../services/file_icon.dart';
+import '../widget/loading.dart';
+import '../services/download_service.dart';
 import '/main.dart';
-import '/functions/load_download_tasks.dart';
 import '/widget/download_status_buttons.dart';
+import 'donation.dart';
 
 class Downloads extends StatefulWidget {
   const Downloads({Key? key}) : super(key: key);
@@ -19,127 +25,200 @@ class DownloadsState extends State<Downloads> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      floatingActionButton: FloatingActionButton.extended(
-        icon: const Icon(
-          Icons.delete_forever_rounded,
-        ),
-        onPressed: () async {
-          await FlutterDownloader.cancelAll();
-          await FlutterDownloader.loadTasks().then(
-            (value) async {
-              for (var i in value!) {
-                FlutterDownloader.remove(
-                    taskId: i.taskId, shouldDeleteContent: true);
-                await box.deleteAll(box.keys);
-              }
+      appBar: AppBar(
+        actions: [
+          IconButton(
+            onPressed: () {
+              Get.to(
+                () => const PaymentsScreen(),
+              );
             },
-          );
-        },
-        label: const Text("Clear All"),
+            icon: const Icon(CupertinoIcons.money_dollar),
+          ),
+          IconButton(
+            onPressed: () {
+              Get.to(() => const Settings());
+            },
+            icon: const Icon(CupertinoIcons.settings),
+          ),
+        ],
+        centerTitle: false,
+        title: const Text("Downloads"),
       ),
-      body: OrientationBuilder(
-        builder: (context, orientation) {
-          return StreamBuilder<List<Map>>(
-            stream: downloadTaskStream(),
-            builder: (context, snapshot) {
-              if (!snapshot.hasData) {
-                return const Center(
-                  child: LoadingIndicator(),
-                );
-              }
-              List<Map> downloadsListMaps = snapshot.data!;
-              return downloadsListMaps.isEmpty
-                  ? const Center(
-                      child: Text("No Downloads yet"),
-                    )
-                  : ListView.builder(
-                      itemCount: downloadsListMaps.length,
-                      itemBuilder: (BuildContext context, int i) {
-                        Map map = downloadsListMaps[i];
-                        String filename = map['filename'];
-                        int progress = map['progress'];
-                        DownloadTaskStatus status = map['status'];
-                        String id = map['id'];
-                        return Column(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: <Widget>[
-                            ListTile(
-                              leading: CachedNetworkImage(
-                                imageUrl:
-                                    box.getAt(downloadsListMaps.length - i - 1),
-                                imageBuilder: (context, imageProvider) =>
-                                    ClipRRect(
-                                  borderRadius: BorderRadius.circular(5),
-                                  child: Container(
-                                    width: orientation == Orientation.portrait
-                                        ? Get.width * .25
-                                        : Get.width * .2,
-                                    decoration: BoxDecoration(
-                                      image: DecorationImage(
-                                        image: imageProvider,
-                                        fit: BoxFit.cover,
+      body: StreamBuilder<List<Map>>(
+        stream: DownloadService.downloadTaskStream(),
+        builder: (context, snapshot) {
+          if (!snapshot.hasData) {
+            return const Center(
+              child: LoadingIndicator(),
+            );
+          }
+          List<Map> downloadsListMaps = snapshot.data!;
+          return downloadsListMaps.isEmpty
+              ? const Center(
+                  child: Text("No Downloads yet"),
+                )
+              : SingleChildScrollView(
+                  child: ListView.builder(
+                    itemCount: downloadsListMaps.length,
+                    shrinkWrap: true,
+                    physics: const NeverScrollableScrollPhysics(),
+                    itemBuilder: (BuildContext context, int i) {
+                      Map map = downloadsListMaps[i];
+                      String filename = map['filename'];
+                      int progress = map['progress'];
+                      DownloadTaskStatus status = map['status'];
+                      String id = map['id'];
+                      Map metadata =
+                          box.getAt(downloadsListMaps.length - i - 1);
+                      return InkWell(
+                        onTap: () {
+                          Get.to(
+                            () => WatchMedia(
+                                mediaPath: "${directory.path}/$filename"),
+                          );
+                        },
+                        child: Padding(
+                          padding:
+                              const EdgeInsets.symmetric(horizontal: gPadding),
+                          child: Container(
+                            height: 90,
+                            padding: const EdgeInsets.all(gPadding),
+                            margin: const EdgeInsets.symmetric(
+                              vertical: gPadding * .5,
+                            ),
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(gPadding),
+                              color: Theme.of(context).colorScheme.onPrimary,
+                              boxShadow: [
+                                BoxShadow(
+                                  color: Theme.of(context)
+                                      .colorScheme
+                                      .onSurface
+                                      .withOpacity(.15),
+                                  blurRadius: 3,
+                                  spreadRadius: 1,
+                                  offset: const Offset(0, 2),
+                                ),
+                              ],
+                            ),
+                            child: Row(
+                              children: [
+                                Container(
+                                  height: 80,
+                                  width: 80,
+                                  decoration: BoxDecoration(
+                                    shape: isVideoFile(
+                                            ".${filename.split(".").last}")
+                                        ? BoxShape.rectangle
+                                        : BoxShape.circle,
+                                    borderRadius: isVideoFile(
+                                            ".${filename.split(".").last}")
+                                        ? BorderRadius.circular(gPadding)
+                                        : null,
+                                    image: DecorationImage(
+                                      image: FileImage(
+                                        File(metadata["thumbNail"]),
                                       ),
+                                      fit: BoxFit.cover,
                                     ),
                                   ),
                                 ),
-                                placeholder: (context, url) =>
-                                    const CircularProgressIndicator(),
-                                errorWidget: (context, url, error) =>
-                                    const Icon(
-                                  Icons.signal_cellular_nodata_rounded,
-                                ),
-                              ),
-                              onTap: status == DownloadTaskStatus.complete
-                                  ? (() {
-                                      Get.to(
-                                        VideoView(
-                                          video: "${directory.path}/$filename",
-                                          isNetwork: false,
+                                const SizedBox(width: gPadding),
+                                Expanded(
+                                  child: Column(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      const SizedBox(height: gPadding),
+                                      Flexible(
+                                        child: Text(
+                                          filename.length > 70
+                                              ? filename.substring(0, 70)
+                                              : filename,
                                         ),
-                                      );
-                                    })
-                                  : null,
-                              isThreeLine: false,
-                              title: Text(filename),
-                              subtitle: status == DownloadTaskStatus.complete
-                                  ? const SizedBox()
-                                  : Column(
-                                      mainAxisAlignment: MainAxisAlignment.end,
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.end,
-                                      children: <Widget>[
-                                        Text('$progress%'),
-                                        Row(
+                                      ),
+                                      const SizedBox(height: gPadding),
+                                      if (status != DownloadTaskStatus.complete)
+                                        Column(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.end,
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.end,
                                           children: <Widget>[
-                                            Expanded(
-                                              child: LinearProgressIndicator(
-                                                value: progress / 100,
-                                                borderRadius:
-                                                    BorderRadius.circular(5),
-                                              ),
+                                            Text('$progress%'),
+                                            Row(
+                                              children: <Widget>[
+                                                Expanded(
+                                                  child:
+                                                      LinearProgressIndicator(
+                                                    value: progress / 100,
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            5),
+                                                  ),
+                                                ),
+                                              ],
                                             ),
                                           ],
                                         ),
-                                      ],
-                                    ),
-                              trailing: buttons(
-                                status,
-                                id,
-                                i,
-                                downloadsListMaps.length,
-                              ),
+                                      Row(
+                                        children: [
+                                          Icon(
+                                            getFileIcon(
+                                                ".${filename.split(".").last}"),
+                                            color: Theme.of(context)
+                                                .colorScheme
+                                                .onSurface
+                                                .withOpacity(.7),
+                                            size: 15,
+                                          ),
+                                          const SizedBox(width: 2),
+                                          Text(
+                                            filename
+                                                .split(".")
+                                                .last
+                                                .toUpperCase(),
+                                            style: TextStyle(
+                                              color: Theme.of(context)
+                                                  .colorScheme
+                                                  .onSurface
+                                                  .withOpacity(.7),
+                                            ),
+                                          ),
+                                          const SizedBox(width: 2),
+                                          if (metadata["duration"] != "")
+                                            Text(
+                                              " | ${metadata["duration"]}",
+                                              style: TextStyle(
+                                                color: Theme.of(context)
+                                                    .colorScheme
+                                                    .onSurface
+                                                    .withOpacity(.7),
+                                              ),
+                                            ),
+                                        ],
+                                      ),
+                                      const SizedBox(height: gPadding),
+                                    ],
+                                  ),
+                                ),
+                                buttons(
+                                  status,
+                                  id,
+                                  i,
+                                  downloadsListMaps.length,
+                                  context,
+                                ),
+                              ],
                             ),
-                            const Divider(
-                              indent: 15,
-                              endIndent: 15,
-                            )
-                          ],
-                        );
-                      },
-                    );
-            },
-          );
+                          ),
+                        ),
+                      );
+                    },
+                  ),
+                );
         },
       ),
     );

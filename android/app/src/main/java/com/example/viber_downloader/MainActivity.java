@@ -1,4 +1,4 @@
-package com.example.viberloader;
+package com.example.viber_downloader;
 
 import io.flutter.embedding.android.FlutterActivity;
 

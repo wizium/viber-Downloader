@@ -1,8 +1,75 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_downloader/flutter_downloader.dart';
-import 'package:viberloader/main.dart';
 
-Widget buttons(DownloadTaskStatus status, String taskid, int index, thumbId) {
+import '../main.dart';
+
+void showCupertinoActions(
+    BuildContext context,
+    DownloadTaskStatus status,
+    VoidCallback pauseDownload,
+    VoidCallback resumeDownload,
+    VoidCallback retryDownload,
+    VoidCallback cancelAndRemoveDownload) {
+  showCupertinoModalPopup(
+    context: context,
+    builder: (BuildContext context) {
+      return CupertinoActionSheet(
+        actions: [
+          if (status == DownloadTaskStatus.running)
+            CupertinoActionSheetAction(
+              onPressed: () {
+                pauseDownload();
+                Navigator.of(context).pop(); // Close after action
+              },
+              child: const Text('Pause'),
+            ),
+          if (status == DownloadTaskStatus.paused)
+            CupertinoActionSheetAction(
+              onPressed: () {
+                resumeDownload();
+                Navigator.of(context).pop();
+              },
+              child: const Text('Resume'),
+            ),
+          if (status == DownloadTaskStatus.failed)
+            CupertinoActionSheetAction(
+              onPressed: () {
+                retryDownload();
+                Navigator.of(context).pop();
+              },
+              child: const Text('Retry'),
+            ),
+          CupertinoActionSheetAction(
+            onPressed: () {
+              cancelAndRemoveDownload();
+              Navigator.of(context).pop(); // Close the sheet
+            },
+            isDestructiveAction: true,
+            child: const Text('Remove'),
+          ),
+          if (status == DownloadTaskStatus.complete)
+            CupertinoActionSheetAction(
+              onPressed: () {
+                // Implement sharing functionality here
+                Navigator.of(context).pop();
+              },
+              child: const Text('Share'),
+            ),
+        ],
+        cancelButton: CupertinoActionSheetAction(
+          onPressed: () {
+            Navigator.of(context).pop(); // Close the action sheet
+          },
+          child: const Text('Cancel'),
+        ),
+      );
+    },
+  );
+}
+
+Widget buttons(DownloadTaskStatus status, String taskid, int index, thumbId,
+    BuildContext context) {
   void retryDownload() async => await FlutterDownloader.retry(taskId: taskid);
 
   void pauseDownload() async => await FlutterDownloader.pause(taskId: taskid);
@@ -14,48 +81,12 @@ Widget buttons(DownloadTaskStatus status, String taskid, int index, thumbId) {
     box.deleteAt(thumbId - index - 1);
   }
 
-  IconButton buildIconButton(IconData icon, VoidCallback onTap) {
-    return IconButton(
-      icon: Icon(icon),
-      onPressed: onTap,
-    );
-  }
-
-  switch (status) {
-    case DownloadTaskStatus.canceled:
-      return Row(
-        children: [
-          buildIconButton(Icons.restart_alt_outlined, retryDownload),
-          buildIconButton(Icons.delete_rounded, cancelAndRemoveDownload),
-        ],
-      );
-    case DownloadTaskStatus.failed:
-      return Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          buildIconButton(Icons.restart_alt_rounded, retryDownload),
-          buildIconButton(Icons.close_rounded, cancelAndRemoveDownload),
-        ],
-      );
-    case DownloadTaskStatus.paused:
-      return Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          buildIconButton(Icons.play_arrow_rounded, resumeDownload),
-          buildIconButton(Icons.close_rounded, cancelAndRemoveDownload),
-        ],
-      );
-    case DownloadTaskStatus.running:
-      return Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          buildIconButton(Icons.pause_rounded, pauseDownload),
-          buildIconButton(Icons.close_rounded, cancelAndRemoveDownload),
-        ],
-      );
-    case DownloadTaskStatus.complete:
-      return buildIconButton(Icons.delete, cancelAndRemoveDownload);
-    default:
-      return const SizedBox();
-  }
+  // Build a button to open the Cupertino action sheet
+  return IconButton(
+    icon: const Icon(Icons.more_vert),
+    onPressed: () {
+      showCupertinoActions(context, status, pauseDownload, resumeDownload,
+          retryDownload, cancelAndRemoveDownload);
+    },
+  );
 }
