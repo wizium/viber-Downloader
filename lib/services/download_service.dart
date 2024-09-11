@@ -74,16 +74,15 @@ class DownloadService {
   static getStoragePath() async {
     String? storedFolderPath = box.get('picked_folder_path');
     if (storedFolderPath != null) {
-      directory = Directory(storedFolderPath);
+      externalDir = Directory(storedFolderPath);
     } else {
       externalDir = (await getExternalStorageDirectory())!;
-      directory = Directory(
-        "${externalDir.parent.parent.parent.parent.path}/Download",
-      );
-      box.put("picked_folder_path", directory);
+      externalDir =
+          Directory("${externalDir.parent.parent.parent.parent.path}/Download");
+      box.put("picked_folder_path", externalDir.path);
     }
-    if (!(await directory.exists())) {
-      Directory(directory.path).createSync(recursive: true);
+    if (!(await externalDir.exists())) {
+      Directory(externalDir.path).createSync(recursive: true);
     }
   }
 
@@ -184,14 +183,14 @@ class DownloadService {
     try {
       await FlutterDownloader.enqueue(
         url: url,
-        savedDir: directory.path,
+        savedDir: externalDir.path,
         saveInPublicStorage: true,
         showNotification: true,
         openFileFromNotification: false,
       ).then((value) async {
         final response = await get(Uri.parse(thumbnailUrl));
         String path =
-            "${directory.path}/${DateTime.now().millisecondsSinceEpoch}.png";
+            "${externalDir.path}/${DateTime.now().millisecondsSinceEpoch}.png";
         final file = File(path);
         await file.writeAsBytes(response.bodyBytes);
         await box.add({

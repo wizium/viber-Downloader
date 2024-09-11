@@ -1,7 +1,8 @@
+// ignore_for_file: use_build_context_synchronously
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_downloader/flutter_downloader.dart';
-
+import 'package:share_plus/share_plus.dart';
 import '../main.dart';
 
 void showCupertinoActions(
@@ -10,7 +11,8 @@ void showCupertinoActions(
     VoidCallback pauseDownload,
     VoidCallback resumeDownload,
     VoidCallback retryDownload,
-    VoidCallback cancelAndRemoveDownload) {
+    VoidCallback cancelAndRemoveDownload,
+    String path) {
   showCupertinoModalPopup(
     context: context,
     builder: (BuildContext context) {
@@ -50,9 +52,14 @@ void showCupertinoActions(
           ),
           if (status == DownloadTaskStatus.complete)
             CupertinoActionSheetAction(
-              onPressed: () {
+              onPressed: () async {
                 // Implement sharing functionality here
                 Navigator.of(context).pop();
+                await Share.shareXFiles(
+                  [XFile(path)],
+                  text:
+                      "🚀 Video Downloader 🎥 Download your favorite videos instantly! 📲✨ Fast, easy, and in HD quality. Try it now: https://play.google.com/store/apps/details?id=com.wizium.viber.downloader 🚀📥",
+                );
               },
               child: const Text('Share'),
             ),
@@ -69,7 +76,7 @@ void showCupertinoActions(
 }
 
 Widget buttons(DownloadTaskStatus status, String taskid, int index, thumbId,
-    BuildContext context) {
+    path, BuildContext context) {
   void retryDownload() async => await FlutterDownloader.retry(taskId: taskid);
 
   void pauseDownload() async => await FlutterDownloader.pause(taskId: taskid);
@@ -86,7 +93,7 @@ Widget buttons(DownloadTaskStatus status, String taskid, int index, thumbId,
     icon: const Icon(Icons.more_vert),
     onPressed: () {
       showCupertinoActions(context, status, pauseDownload, resumeDownload,
-          retryDownload, cancelAndRemoveDownload);
+          retryDownload, cancelAndRemoveDownload, path);
     },
   );
 }

@@ -25,6 +25,6 @@ class AppStates extends GetxController {
   }
 
   themeStateUpdate() {
-    dark.value = box.get("isDark", defaultValue: true);
+    dark.value = box.get("isDark", defaultValue: false);
   }
 }

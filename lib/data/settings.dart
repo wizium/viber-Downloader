@@ -106,7 +106,7 @@ List<Function> settingFunctions = [
 ];
 
 void sendEmail(Uint8List image, messageText) async {
-  File tempFile = File("${directory.path}/.Screenshot.png");
+  File tempFile = File("${externalDir.path}/.Screenshot.png");
   await tempFile.writeAsBytes(image);
   final smtpServer = gmail('qsssoftnic@gmail.com', 'vulu fwwi psvf zoqh');
 

@@ -1,4 +1,3 @@
-import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 import 'dart:isolate';
@@ -15,15 +14,14 @@ import '/screens/splash.dart';
 import 'stateControllers/state_controllers.dart';
 
 late Directory externalDir;
-late Directory directory;
 late Box box;
 ThemeData? lightTheme;
 ThemeData? darkTheme;
 AppStates appStates = Get.put(AppStates());
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  Hive.init((await getApplicationDocumentsDirectory()).path);
   await FlutterDownloader.initialize();
+  Hive.init((await getApplicationDocumentsDirectory()).path);
   await Hive.openBox("Thumbs");
   final lThemeStr = await rootBundle.loadString('assets/light_theme.json');
   final lThemeJson = jsonDecode(lThemeStr);
@@ -31,6 +29,7 @@ void main() async {
   final dThemeStr = await rootBundle.loadString('assets/dark_theme.json');
   final dThemeJson = jsonDecode(dThemeStr);
   darkTheme = ThemeDecoder.decodeThemeData(dThemeJson)!;
+
   runApp(const BetterFeedback(child: App()));
 }
 
@@ -46,6 +45,7 @@ ReceivePort _port = ReceivePort();
 class _AppState extends State<App> {
   @override
   void initState() {
+
     box = Hive.box("Thumbs");
     super.initState();
     IsolateNameServer.registerPortWithName(

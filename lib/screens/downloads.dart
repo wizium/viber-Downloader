@@ -73,10 +73,8 @@ class DownloadsState extends State<Downloads> {
                           box.getAt(downloadsListMaps.length - i - 1);
                       return InkWell(
                         onTap: () {
-                          Get.to(
-                            () => WatchMedia(
-                                mediaPath: "${directory.path}/$filename"),
-                          );
+                          Get.to(() => WatchMedia(
+                              mediaPath: "${externalDir.path}/$filename"));
                         },
                         child: Padding(
                           padding:
@@ -89,7 +87,7 @@ class DownloadsState extends State<Downloads> {
                             ),
                             decoration: BoxDecoration(
                               borderRadius: BorderRadius.circular(gPadding),
-                              color: Theme.of(context).colorScheme.onPrimary,
+                              color: Theme.of(context).colorScheme.surface,
                               boxShadow: [
                                 BoxShadow(
                                   color: Theme.of(context)
@@ -209,6 +207,7 @@ class DownloadsState extends State<Downloads> {
                                   id,
                                   i,
                                   downloadsListMaps.length,
+                                  "${externalDir.path}/$filename",
                                   context,
                                 ),
                               ],
